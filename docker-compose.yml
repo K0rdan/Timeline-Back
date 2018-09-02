@@ -1,0 +1,17 @@
+version: '3'
+
+networks:
+  timeline-back:
+    driver: bridge
+
+services:
+  timeline-graphql:
+    container_name: timeline-graphql
+    image: k0rdan/timeline-graphql:${TIMELINE_GRAPHQL_VERSION}
+    networks:
+      - timeline-back
+    ports:
+      - '${TIMELINE_GRAPHQL_PORT}:${TIMELINE_GRAPHQL_PORT}'
+    environment:
+      - TIMELINE_GRAPHQL_PORT=${TIMELINE_GRAPHQL_PORT}
+    command: ['bash', '-c', 'cd /usr/timeline-graphql && yarn start']
