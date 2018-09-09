@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+  timeline-back:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_icc: 'true'
+      com.docker.network.bridge.enable_ip_masquerade: 'true'
+      com.docker.network.bridge.host_binding_ipv4: '0.0.0.0'
+      com.docker.network.driver.mtu: '1350'
+
+services:
+  timeline-phpmyadmin:
+    container_name: timeline-phpmyadmin
+    image: phpmyadmin/phpmyadmin:${TIMELINE_PMA_VERSION}
+    networks:
+      - timeline-back
+    ports:
+      - '${TIMELINE_PMA_PORT}:80'
+    environment:
+      # Environment variables preceed by PMA_
+      - PMA_HOST=${TIMELINE_PMA_MYSQL_HOST}

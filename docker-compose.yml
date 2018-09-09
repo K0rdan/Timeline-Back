@@ -3,15 +3,27 @@ version: '3'
 networks:
   timeline-back:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_icc: 'true'
+      com.docker.network.bridge.enable_ip_masquerade: 'true'
+      com.docker.network.bridge.host_binding_ipv4: '0.0.0.0'
+      com.docker.network.driver.mtu: '1350'
 
 services:
-  timeline-graphql:
-    container_name: timeline-graphql
-    image: k0rdan/timeline-graphql:${TIMELINE_GRAPHQL_VERSION}
+  mysql:
+    container_name: timeline-mysql
+    image: mysql:latest
     networks:
       - timeline-back
-    ports:
-      - '${TIMELINE_GRAPHQL_PORT}:${TIMELINE_GRAPHQL_PORT}'
+    volumes:
+      # Default MySQL data volume
+      - /var/lib/mysql
+      # Init database with our SQL file
+      - ./mysql/production/:/docker-entrypoint-initdb.d/
+    expose:
+      # Default MySQL listening port
+      - '${TIMELINE_MYSQL_PORT}'
     environment:
-      - TIMELINE_GRAPHQL_PORT=${TIMELINE_GRAPHQL_PORT}
-    command: ['bash', '-c', 'cd /usr/timeline-graphql && yarn start']
+      # Environment variables preceed by TIMELINE_MYSQL_
+      - MYSQL_ROOT_PASSWORD=${TIMELINE_MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${TIMELINE_MYSQL_DATABASE}
