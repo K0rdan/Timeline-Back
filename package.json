@@ -15,6 +15,10 @@
   "scripts": {
     "docker-clean": "sh ./scripts/docker/clean.sh",
     "docker-run": "yarn docker-clean && docker-compose up -d",
-    "docker-dev": "yarn docker-clean && docker-compose -f docker-compose.dev.yml up -d"
+    "docker-dev": "yarn docker-clean && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d"
+  },
+  "devDependencies": {
+    "graphql-cli": "^2.16.7",
+    "prisma": "^1.15.3"
   }
 }

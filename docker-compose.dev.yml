@@ -3,11 +3,6 @@ version: '3'
 networks:
   timeline-back:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.enable_icc: 'true'
-      com.docker.network.bridge.enable_ip_masquerade: 'true'
-      com.docker.network.bridge.host_binding_ipv4: '0.0.0.0'
-      com.docker.network.driver.mtu: '1350'
 
 services:
   timeline-phpmyadmin:
@@ -18,5 +13,51 @@ services:
     ports:
       - '${TIMELINE_PMA_PORT}:80'
     environment:
-      # Environment variables preceed by PMA_
       - PMA_HOST=${TIMELINE_PMA_MYSQL_HOST}
+
+  timeline-graphql:
+    container_name: timeline-graphql
+    image: k0rdan/timeline-graphql:${TIMELINE_GRAPHQL_VERSION}
+    networks:
+      - timeline-back
+    ports:
+      - '${TIMELINE_GRAPHQL_PORT}:${TIMELINE_GRAPHQL_PORT}'
+    volumes:
+      - ./graphql:/usr/timeline-graphql
+      - ./prisma:/usr/timeline-graphql/prisma
+    environment:
+      GRAPHQL_CONFIG_ENDPOINT_NAME: ${ENV}
+    command: ['bash', '-c', 'cd /usr/timeline-graphql']
+
+  timeline-prisma:
+    container_name: timeline-prisma
+    image: k0rdan/timeline-prisma:${TIMELINE_PRISMA_VERSION}
+    networks:
+      - timeline-back
+    ports:
+      - '${TIMELINE_PRISMA_PORT}:${TIMELINE_PRISMA_PORT}'
+    volumes:
+      - ./prisma:/app/prisma
+    environment:
+      DEBUG: '*'
+      PRISMA_CONFIG: |
+        managementApiSecret: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
+        port: ${TIMELINE_PRISMA_PORT}
+        databases:
+          default:
+            connector: mysql
+            migrations: true
+            host: timeline-mysql
+            port: ${TIMELINE_MYSQL_PORT}
+            user: ${TIMELINE_MYSQL_USER}
+            password: ${TIMELINE_MYSQL_PASSWORD}
+    command:
+      [
+        'dockerize',
+        '--wait',
+        'http://localhost:${TIMELINE_PRISMA_PORT}',
+        '--wait',
+        'http://localhost:${TIMELINE_GRAPHQL_PORT}',
+        'prisma',
+        'deploy',
+      ]
