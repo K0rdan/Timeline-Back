@@ -15,20 +15,6 @@ services:
     environment:
       - PMA_HOST=${TIMELINE_PMA_MYSQL_HOST}
 
-  timeline-graphql:
-    container_name: timeline-graphql
-    image: k0rdan/timeline-graphql:${TIMELINE_GRAPHQL_VERSION}
-    networks:
-      - timeline-back
-    ports:
-      - '${TIMELINE_GRAPHQL_PORT}:${TIMELINE_GRAPHQL_PORT}'
-    volumes:
-      - ./graphql:/usr/timeline-graphql
-      - ./prisma:/usr/timeline-graphql/prisma
-    environment:
-      GRAPHQL_CONFIG_ENDPOINT_NAME: ${ENV}
-    command: ['bash', '-c', 'cd /usr/timeline-graphql']
-
   timeline-prisma:
     container_name: timeline-prisma
     image: k0rdan/timeline-prisma:${TIMELINE_PRISMA_VERSION}
@@ -37,9 +23,16 @@ services:
     ports:
       - '${TIMELINE_PRISMA_PORT}:${TIMELINE_PRISMA_PORT}'
     volumes:
-      - ./prisma:/app/prisma
+      - ./prisma/prisma.yml:/app/prisma.yml
+      - ./prisma/datamodel.graphql:/app/datamodel.graphql
+      - ./prisma/seed.graphql:/app/seed.graphql
+      - ./prisma/start.sh:/app/start.sh
     environment:
       DEBUG: '*'
+      MYSQL_HOST: ${TIMELINE_MYSQL_HOST}
+      MYSQL_PORT: ${TIMELINE_MYSQL_PORT}
+      PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
+      PRISMA_MANAGEMENT_API_SECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
       PRISMA_CONFIG: |
         managementApiSecret: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
         port: ${TIMELINE_PRISMA_PORT}
@@ -51,13 +44,19 @@ services:
             port: ${TIMELINE_MYSQL_PORT}
             user: ${TIMELINE_MYSQL_USER}
             password: ${TIMELINE_MYSQL_PASSWORD}
-    command:
-      [
-        'dockerize',
-        '--wait',
-        'http://localhost:${TIMELINE_PRISMA_PORT}',
-        '--wait',
-        'http://localhost:${TIMELINE_GRAPHQL_PORT}',
-        'prisma',
-        'deploy',
-      ]
+
+  timeline-graphql:
+    container_name: timeline-graphql
+    image: k0rdan/timeline-graphql:${TIMELINE_GRAPHQL_VERSION}
+    networks:
+      - timeline-back
+    ports:
+      - '${TIMELINE_GRAPHQL_PORT}:${TIMELINE_GRAPHQL_PORT}'
+    volumes:
+      - ./graphql:/usr/timeline-graphql
+      - ./prisma:/usr/timeline-graphql/prisma
+    environment:
+      GRAPHQL_PORT: ${TIMELINE_GRAPHQL_PORT}
+      PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
+      PRISMA_MANAGEMENT_API_SECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
+    command: 'bash -c cd /usr/timeline-graphql/prisma && prisma deploy && cd /usr/timeline-graphql/src && node index.js'
