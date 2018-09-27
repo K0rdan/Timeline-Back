@@ -54,9 +54,16 @@ services:
       - '${TIMELINE_GRAPHQL_PORT}:${TIMELINE_GRAPHQL_PORT}'
     volumes:
       - ./graphql:/usr/timeline-graphql
-      - ./prisma:/usr/timeline-graphql/prisma
+      - ./prisma/prisma.yml:/usr/timeline-graphql/prisma/prisma.yml
+      - ./prisma/datamodel.graphql:/usr/timeline-graphql/prisma/datamodel.graphql
+      - ./prisma/seed.graphql:/usr/timeline-graphql/prisma/seed.graphql
     environment:
       GRAPHQL_PORT: ${TIMELINE_GRAPHQL_PORT}
+      PRISMA_HOST: ${TIMELINE_PRISMA_HOST}
       PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
       PRISMA_MANAGEMENT_API_SECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
-    command: 'bash -c cd /usr/timeline-graphql/prisma && prisma deploy && cd /usr/timeline-graphql/src && node index.js'
+    command: [
+      'bash',
+      '-c',
+      'cd /usr/timeline-graphql && yarn run wait-for-prisma && yarn run update-prisma-schema && yarn start'
+    ]
