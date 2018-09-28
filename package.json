@@ -2,7 +2,7 @@
   "name": "timeline-back",
   "author": "Kordan",
   "license": "ISC",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Timeline-Back",
   "repository": {
     "type": "git",
@@ -11,14 +11,5 @@
   "bugs": {
     "url": "https://github.com/K0rdan/Timeline-Back/issues"
   },
-  "homepage": "https://github.com/K0rdan/Timeline-Back#readme",
-  "scripts": {
-    "docker-clean": "sh ./scripts/docker/clean.sh",
-    "docker-run": "yarn docker-clean && docker-compose up -d",
-    "docker-dev": "yarn docker-clean && docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d"
-  },
-  "devDependencies": {
-    "graphql-cli": "^2.16.7",
-    "prisma": "^1.15.3"
-  }
+  "homepage": "https://github.com/K0rdan/Timeline-Back#readme"
 }

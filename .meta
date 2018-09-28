@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "graphql": "https://github.com/K0rdan/Timeline-GraphQL",
+    "prisma": "https://github.com/K0rdan/Timeline-Prisma"
+  }
+}
