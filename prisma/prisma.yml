@@ -1,4 +1,0 @@
-endpoint: http://timeline-prisma:4466/timeline
-datamodel: datamodel.graphql
-seed:
-  import: seed.graphql
