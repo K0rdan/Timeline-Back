@@ -31,8 +31,9 @@ services:
       DEBUG: '*'
       MYSQL_HOST: ${TIMELINE_MYSQL_HOST}
       MYSQL_PORT: ${TIMELINE_MYSQL_PORT}
-      PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
-      PRISMA_MANAGEMENT_API_SECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
+      TIMELINE_PRISMA_HOST: ${TIMELINE_PRISMA_HOST}
+      TIMELINE_PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
+      TIMELINE_PRISMA_MANAGEMENTAPISECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
       PRISMA_CONFIG: |
         managementApiSecret: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
         port: ${TIMELINE_PRISMA_PORT}
@@ -44,6 +45,7 @@ services:
             port: ${TIMELINE_MYSQL_PORT}
             user: ${TIMELINE_MYSQL_USER}
             password: ${TIMELINE_MYSQL_PASSWORD}
+    command: [ 'bash', '-c', 'cd /app && /app/start.sh']
 
   timeline-graphql:
     container_name: timeline-graphql
@@ -58,10 +60,10 @@ services:
       - ./prisma/datamodel.graphql:/usr/timeline-graphql/prisma/datamodel.graphql
       - ./prisma/seed.graphql:/usr/timeline-graphql/prisma/seed.graphql
     environment:
-      GRAPHQL_PORT: ${TIMELINE_GRAPHQL_PORT}
-      PRISMA_HOST: ${TIMELINE_PRISMA_HOST}
-      PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
-      PRISMA_MANAGEMENT_API_SECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
+      TIMELINE_GRAPHQL_PORT: ${TIMELINE_GRAPHQL_PORT}
+      TIMELINE_PRISMA_HOST: ${TIMELINE_PRISMA_HOST}
+      TIMELINE_PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
+      TIMELINE_PRISMA_MANAGEMENTAPISECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
     command: [
       'bash',
       '-c',
