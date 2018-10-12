@@ -28,6 +28,7 @@ services:
       TIMELINE_PRISMA_HOST: ${TIMELINE_PRISMA_HOST}
       TIMELINE_PRISMA_PORT: ${TIMELINE_PRISMA_PORT}
       TIMELINE_PRISMA_MANAGEMENTAPISECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
+      PRISMA_MANAGEMENT_API_SECRET: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
       PRISMA_CONFIG: |
         managementApiSecret: ${TIMELINE_PRISMA_MANAGEMENTAPISECRET}
         port: ${TIMELINE_PRISMA_PORT}
@@ -56,5 +57,5 @@ services:
     command: [
       'bash',
       '-c',
-      'cd /usr/timeline-graphql && yarn run wait-for-prisma && yarn run update-prisma-schema && yarn start'
+      'cd /usr/timeline-graphql && yarn run wait-for-prisma && yarn run update-schemas && yarn start'
     ]
