@@ -11,5 +11,11 @@
   "bugs": {
     "url": "https://github.com/K0rdan/Timeline-Back/issues"
   },
-  "homepage": "https://github.com/K0rdan/Timeline-Back#readme"
+  "homepage": "https://github.com/K0rdan/Timeline-Back#readme",
+  "scripts": {
+    "deploy": "docker-compose up -d",
+    "deploydev": "docker-compose -f docker-compose.dev.yml -f docker-compose.yml up -d",
+    "build": "docker-compose -f docker-compose.dev.yml -f docker-compose.yml build --no-cache --force-rm && yarn deploydev",
+    "clean": "docker rm -f $(docker ps -aqf \"name=timeline\")"
+  }
 }

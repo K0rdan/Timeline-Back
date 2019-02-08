@@ -17,7 +17,12 @@ services:
 
   timeline-prisma:
     container_name: timeline-prisma
-    image: k0rdan/timeline-prisma:${TIMELINE_PRISMA_VERSION}
+    build:
+      context: ./prisma
+      args:
+        - HTTP_PROXY=http://${PROXY_USER:-}:${PROXY_PASSWORD:-}@${PROXY_HOST:-}:${PROXY_PORT:-}
+        - HTTPS_PROXY=http://${PROXY_USER:-}:${PROXY_PASSWORD:-}@${PROXY_HOST:-}:${PROXY_PORT:-}
+        - NO_PROXY=${PROXY_BYPASS}
     networks:
       - timeline-back
     ports:
